@@ -31,9 +31,10 @@ trait Request
         array    $options = [],
     ): void
     {
+        $options['stream'] = true;  // Ensure the response is streamed
         $response = $this->client->request($method, $url, $options);
 
-        $stream = $response->getBody()->detach();
+        $stream = $response->getBody()->detach();  // Detach the stream for manual handling
 
         while (!feof($stream)) {
             $line = fgets($stream);
@@ -46,11 +47,14 @@ trait Request
                 continue;
             }
 
-            if ($data['done']) {
+            if (isset($data['done']) && $data['done']) {
                 $callback(new FinalPartialResult($response, $data));
+                break;  // Exit the loop if 'done' is true
             } else {
                 $callback(new PartialResult($response, $data));
             }
         }
+
+        fclose($stream);  // Close the stream when done
     }
 }
