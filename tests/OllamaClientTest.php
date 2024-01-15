@@ -47,4 +47,23 @@ final class OllamaClientTest extends TestCase
         $this->dump($message);
         $this->assertNotEmpty($message);
     }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function testChat(): void
+    {
+        $client = new Client([
+            'base_uri' => 'http://172.24.244.146:11434'
+        ]);
+
+        $result = $client->chat([
+            'model' => 'dolphin2.2-mistral:7b-q6_K',
+            'messages' => [
+                ["role" => 'user', 'content' => 'why is the sky blue?'],
+            ],
+        ]);
+
+        $this->assertInstanceOf(Result::class, $result);
+    }
 }

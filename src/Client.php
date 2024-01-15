@@ -69,4 +69,21 @@ class Client
             ]
         ]);
     }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function chat(array $array): Result
+    {
+        $this->ensureParameters($array, ['model', 'messages']);
+
+        return $this->request('POST', '/api/chat', [
+            'json' => array_merge($array, [
+                'stream' => false,
+            ]),
+            'headers' => [
+                'Accept' => 'application/json'
+            ]
+        ]);
+    }
 }
